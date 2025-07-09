@@ -2,66 +2,56 @@ import SwiftUI
 
 struct RiverProgressBar: View {
     let progress: Double
-    
+
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // Фон трассы
-//                LinearGradient(gradient: Gradient(colors: [Color.black, Color.gray.opacity(0.6)]),
-//                               startPoint: .top,
-//                               endPoint: .bottom)
-//                    .ignoresSafeArea()
+                // Однотонный зеленый фон
+                Color.green
+                    .ignoresSafeArea()
                 
-                VStack(spacing: 50) {
+                VStack(spacing: 40) {
                     Spacer()
                     
-                    // Бегущие трассы
-                    TrackLines(progress: progress)
-                        .frame(height: 100)
+                    // Название игры
+                    Text("River City")
+                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 2)
                     
-                    // Прогресс-текст
-                    Text("Race loading: \(Int(progress * 100))%")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.yellow)
-                        .shadow(color: .black, radius: 4, x: 2, y: 2)
+                    // Прогресс-бар
+                    SimpleProgressBar(progress: progress)
+                        .frame(height: 18)
+                        .padding(.horizontal, 40)
                     
+                    // Текст загрузки
+                    Text("Loading... \(Int(progress * 100))%")
+                        .font(.system(size: 20, weight: .medium, design: .rounded))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.2), radius: 2, x: 1, y: 1)
+                    
+                    Spacer()
                 }
+                .frame(width: geo.size.width, height: geo.size.height)
             }
-            .frame(width: geo.size.width, height: geo.size.height)
-            .background(
-                Image(.background)
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(1.5)
-                    .frame(width: geo.size.width, height: geo.size.height)
-            )
         }
     }
 }
 
-private struct TrackLines: View {
+private struct SimpleProgressBar: View {
     let progress: Double
-    @State private var animate = false
 
     var body: some View {
-        VStack(spacing: 12) {
-            ForEach(0..<4) { track in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(height: 12)
-                    
-                    Capsule()
-                        .fill(Color.yellow)
-                        .frame(width: animate ? CGFloat(progress) * 300 : 0, height: 12)
-                        .shadow(color: .yellow, radius: 8)
-                        .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: false), value: animate)
-                }
-            }
+        ZStack(alignment: .leading) {
+            Capsule()
+                .fill(Color.white.opacity(0.2))
+                .frame(height: 18)
+            Capsule()
+                .fill(Color.white)
+                .frame(width: CGFloat(progress) * 260, height: 18)
+                .shadow(color: .white.opacity(0.5), radius: 6)
         }
-        .onAppear {
-            animate = true
-        }
+        .animation(.easeInOut(duration: 0.7), value: progress)
     }
 }
 
